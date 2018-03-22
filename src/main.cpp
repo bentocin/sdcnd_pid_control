@@ -34,8 +34,8 @@ int main()
 
   PID pid, pid_t;
   // Initialize the pid variable
-  pid.Init(0.15, 0.0, 3.0);
-  pid_t.Init(0.3, 0.0, 0.0);
+  pid.Init(0.15, 0.004, 3.0);
+  pid_t.Init(0.35, 0.0, 1.5);
 
   h.onMessage([&pid, &pid_t](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -60,9 +60,9 @@ int main()
           // Calculate steering value
           steer_value = pid.TotalError();
 
-          // Update error values with abs(cte) as it doesn't matter 
-          // in which direction the car is off
-          pid_t.UpdateError(fabs(cte));
+          // Update error values with abs(steer_value) as it doesn't matter 
+          // in which direction the car is steering
+          pid_t.UpdateError(fabs(steer_value));
 
           // Calculate throttle
           throttle = 0.5 + pid_t.TotalError();
